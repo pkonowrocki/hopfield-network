@@ -3,7 +3,7 @@ import numpy as np
 class HopefieldNetwork(object):
     def __init__(self, size):
         self.num_neurons = size
-        self.W = np.zeros(self.num_neurons, self.num_neurons)
+        self.W = np.zeros((self.num_neurons, self.num_neurons), dtype = float)
     
     def resetNetwork(self):
         self.W = np.zeros(self.W.shape, dtype = float)
@@ -14,7 +14,7 @@ class HopefieldNetwork(object):
             t = ex - rho
             self.W += np.outer(t, t)
         
-        self.W -= np.diag(W)
+        self.W -= np.diag(self.W)
         self.W /= len(data)
     
     def _async(self, x, W):
