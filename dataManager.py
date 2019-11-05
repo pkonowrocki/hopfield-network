@@ -11,15 +11,26 @@ def importData(path):
     return X, np.max(X[1].shape)
 
 def resize(X, size = None):
-    if size is None:
-        s = X[1].shape[1]
-        size = (np.sqrt(s), np.sqrt(s))
-
-    if len(X) > 1:
-        return [np.resize(x, size) for x in X]
+    if type(X) is list:
+        if size is None:
+            size = _calculate_size(X[0].shape)
+        return [_resize_single(x, size) for x in X]
     else:
-        return np.resize(X, size)
+        return _resize_single(X, size)
 
-def print(X):
-    plt.imshow(X)
-    plt.show()
+def _resize_single(X, size = None):
+    if size is None:
+        size = _calculate_size(X.shape)
+    return np.resize(X, size)
+
+def _calculate_size(shape):
+    return (int(np.sqrt(shape)), int(np.sqrt(shape)))
+
+def show(X):
+    if type(X) is list:
+        for x in X:
+            plt.imshow(x)
+            plt.show()
+    else:
+        plt.imshow(X)
+        plt.show()
