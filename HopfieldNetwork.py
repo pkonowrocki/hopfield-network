@@ -18,7 +18,7 @@ class HopefieldNetwork(object):
         for i, ex in enumerate(data):
             t = ex - rho
             self.W += np.outer(t, t)
-            self.show_weights(f'Iteration#{i}')
+            self.show_weights(f'Iteration#{i+1}')
         
         self.W -= np.diag(self.W)
         self.W /= len(data)

@@ -29,8 +29,11 @@ def _calculate_size(shape):
 def show(X):
     if type(X) is list:
         for x in X:
-            plt.imshow(x)
-            plt.show()
+            _show_single(x)
     else:
-        plt.imshow(X)
-        plt.show()
+        _show_single(X)
+
+def _show_single(X):
+    plt.imshow(X)
+    plt.show()
+    plt.pause(0.1)
