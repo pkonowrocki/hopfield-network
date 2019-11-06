@@ -1,4 +1,6 @@
 import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.cm as cm
 
 class HopefieldNetwork(object):
     def __init__(self, size):
@@ -9,13 +11,18 @@ class HopefieldNetwork(object):
         self.W = np.zeros(self.W.shape, dtype = float)
 
     def trainHebb(self, data):
+        self.initialize_for_showing_weights()
+
         rho = np.sum([np.sum(t) for t in data]) / (len(data) * self.num_neurons)
-        for ex in data:
+
+        for i, ex in enumerate(data):
             t = ex - rho
             self.W += np.outer(t, t)
+            self.show_weights(f'Iteration#{i}')
         
         self.W -= np.diag(self.W)
         self.W /= len(data)
+        self.show_weights('Final', is_final = True)
     
     def _async(self, x, W):
         idx = np.random.randint(0, self.num_neurons) 
@@ -47,3 +54,19 @@ class HopefieldNetwork(object):
 
     def energy(self, s):
         return -0.5*np.matmul(np.matmul(s, self.W), s)
+
+    def initialize_for_showing_weights(self):
+        plt.ion()
+        plt.figure(figsize=(6, 5))
+        plt.tight_layout()
+
+    def show_weights(self, iteration_name, is_final = False):
+        plt.clf()
+        plt.title(f'Network Weights - {iteration_name}')
+        colors = plt.imshow(self.W, cmap=cm.coolwarm)
+        plt.colorbar(colors)
+
+        if is_final:
+            plt.savefig('weights.png')
+        plt.show(block = is_final)
+        plt.pause(0.1)
