@@ -105,3 +105,6 @@ venv.bak/
 
 # learning data
 data/
+
+# images
+weights.png
