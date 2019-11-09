@@ -1,4 +1,5 @@
 import dataManager
+import dataCorruptor as dc
 import HopfieldNetwork
 import numpy as np
 
@@ -6,12 +7,15 @@ def test0():
     X, size = dataManager.importData('data/small-7x7.csv')
     net = HopfieldNetwork.HopefieldNetwork(size)
     net.trainOja(X, iter=100000)
-    x = X[4]
+
+    corruptedFigures = dc.corruptAllFigures(X, percent = 5, resultSizePerFigure = 10)
+    index = 0
+    
+    x = X[index]
     s = dataManager.resize(x)
     dataManager.show([s])
-    x[5] = x[5]*(-1)
-    x[20] = x[20]*(-1)
-    x[15] = x[15]*(-1)
+
+    x = corruptedFigures[index][0]
     s = dataManager.resize(x)
     dataManager.show([s])
     s = net.forward(x)

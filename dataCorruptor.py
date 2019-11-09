@@ -1,10 +1,23 @@
 import csv
 import random
 
+def corruptAllFigures(allFigures, percent, resultSizePerFigure):
+    corruptedAllFigures = []
+    for figure in allFigures:
+        corruptedFigures = corruptFigure(figure, percent, resultSizePerFigure)
+        corruptedAllFigures.append(corruptedFigures)
+    return corruptedAllFigures
+
+def corruptFigure(figure, percent, resultSize):
+    figures = [figure] * resultSize
+    return _corruptData(figures, percent)
+
 def corruptData():
     filename = 'large-25x25'
-    figures = _corruptData(_readData(filename), _getPercent())
-    _saveData(figures, filename)
+    inititalFigures = _readData(filename)
+    corruptedFigures = _corruptData(inititalFigures, _getPercent())
+    _saveData(corruptedFigures, filename)
+    return corruptedFigures;
 
 def _readData(filename):
     fullPath = f'data/{filename}.csv' 
