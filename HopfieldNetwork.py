@@ -11,7 +11,7 @@ class HopefieldNetwork(object):
         self.W = np.ones((self.num_neurons, self.num_neurons), dtype = float)
     
     def trainHebb(self, data, showWeights = False):
-        if(showWeights):
+        if showWeights:
             self.initialize_for_showing_weights()
 
         rho = np.sum([np.sum(t) for t in data]) / (len(data) * self.num_neurons)
@@ -26,14 +26,14 @@ class HopefieldNetwork(object):
         self.W -= np.diag(np.diag(self.W))
         self.W = self.W/len(data)
 
-        if(showWeights):
-                self.show_weights(f'Final', is_final=True)
+        if showWeights:
+            self.show_weights(f'Final', is_final=True)
 
     def trainOja(self, data, u = 0.0001, iter = 1000, showWeights = False):
         self.W = np.random.normal(scale=0.25, size=self.W.shape)
         self.W = (self.W + self.W.T)/2
 
-        if(showWeights):
+        if showWeights:
             self.initialize_for_showing_weights()
             self.show_weights(f'Iteration#{0}')
 
@@ -53,8 +53,8 @@ class HopefieldNetwork(object):
                 break 
         
         self.W -= np.diag(np.diag(self.W))
-        if(showWeights):
-            self.show_weights(f'Final')
+        if showWeights:
+            self.show_weights(f'Final', is_final=True)
 
     def _async(self, x, W):
         idx = np.random.randint(0, self.num_neurons) 
