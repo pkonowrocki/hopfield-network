@@ -3,10 +3,12 @@ import HopfieldNetwork
 import numpy as np
 
 def test0():
-    X, size = dataManager.importData('data/small-7x7.csv')
+    X, size = dataManager.importData('data/large-25x25.csv')
+    print("Loaded ", len(X), " samples")
     net = HopfieldNetwork.HopefieldNetwork(size)
-    net.trainOja(X, iter=100000)
-    x = X[4]
+    net.trainOja(X, u=0.001, iter=200, showWeights=True)
+    # net.trainHebb(X, showWeights=True)
+    x = X[1]
     s = dataManager.resize(x)
     dataManager.show([s])
     x[5] = x[5]*(-1)
