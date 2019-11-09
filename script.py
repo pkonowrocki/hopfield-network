@@ -4,13 +4,15 @@ import HopfieldNetwork
 import numpy as np
 
 def test0():
-    X, size = dataManager.importData('data/small-7x7.csv')
+    X, size = dataManager.importData('data/large-25x25.csv')
+    print("Loaded ", len(X), " samples")
     net = HopfieldNetwork.HopefieldNetwork(size)
-    net.trainOja(X, iter=100000)
-
-    corruptedFigures = dc.corruptAllFigures(X, percent = 5, resultSizePerFigure = 10)
-    index = 0
+    net.trainOja(X, u=0.001, iter=200, showWeights=True)
+    # net.trainHebb(X, showWeights=True)
     
+    corruptedFigures = dc.corruptAllFigures(X, percent = 5, resultSizePerFigure = 10)
+    
+    index = 0
     x = X[index]
     s = dataManager.resize(x)
     dataManager.show([s])
