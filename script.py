@@ -1,6 +1,7 @@
 import dataManager
 import dataCorruptor as dc
 import HopfieldNetwork
+import matplotlib.pyplot as plt
 import numpy as np
 
 def test0():
@@ -12,6 +13,7 @@ def test0():
     
     corruptedFigures = dc.corruptAllFigures(X, percent = 5, resultSizePerFigure = 10)
     
+    plt.ioff()
     index = 0
     x = X[index]
     s = dataManager.resize(x)
