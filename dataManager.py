@@ -34,6 +34,7 @@ def show(X):
         _show_single(X)
 
 def _show_single(X):
+    plt.figure(1000)
     plt.imshow(X)
     plt.show()
     plt.pause(0.1)
