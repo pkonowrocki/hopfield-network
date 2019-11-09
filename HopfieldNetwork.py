@@ -27,7 +27,8 @@ class HopefieldNetwork(object):
         self.W = self.W/len(data)
 
         if showWeights:
-            self.show_weights(f'Final', is_final=True)
+            self.show_weights(f'Final', block=True)
+        self.save_weights()
 
     def trainOja(self, data, u = 0.0001, iter = 1000, showWeights = False):
         self.W = np.random.normal(scale=0.25, size=self.W.shape)
@@ -38,6 +39,7 @@ class HopefieldNetwork(object):
             self.show_weights(f'Iteration#{0}')
 
         for i in range(iter):
+            print(f'Iteration #{i+1}/{iter}')
             Wprev = self.W.copy()
             for x in data:
                 Ys = np.dot(x, self.W)
@@ -49,12 +51,13 @@ class HopefieldNetwork(object):
                 self.show_weights(f'Iteration#{i+1}')
                 print(i+1, "\t", np.linalg.norm(Wprev - self.W))
 
-            if np.linalg.norm(Wprev - self.W) < 1e-10:
+            if np.linalg.norm(Wprev - self.W) < 1e-14:
                 break 
         
         self.W -= np.diag(np.diag(self.W))
         if showWeights:
-            self.show_weights(f'Final', is_final=True)
+            self.show_weights(f'Final', block=True)
+        self.save_weights()
 
     def _async(self, x, W):
         idx = np.random.randint(0, self.num_neurons) 
@@ -92,14 +95,20 @@ class HopefieldNetwork(object):
         plt.figure(figsize=(6, 5))
         plt.tight_layout()
 
-    def show_weights(self, iteration_name, is_final = False):
+    def show_weights(self, iteration_name, block = False):
         plt.figure(1)
         plt.clf()
         plt.title(f'Network Weights - {iteration_name}')
         colors = plt.imshow(self.W, cmap=cm.coolwarm)
         plt.colorbar(colors)
 
-        if is_final:
-            plt.savefig('weights.png')
-        plt.show(block = is_final)
+        plt.show(block = block)
         plt.pause(0.1)
+
+    def save_weights(self):
+        plt.figure(1)
+        plt.clf()
+        plt.title(f'Network Weights - Final')
+        colors = plt.imshow(self.W, cmap=cm.coolwarm)
+        plt.colorbar(colors)
+        plt.savefig('weights.png')
