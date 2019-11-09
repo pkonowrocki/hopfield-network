@@ -5,7 +5,7 @@ import numpy as np
 def test0():
     X, size = dataManager.importData('data/small-7x7.csv')
     net = HopfieldNetwork.HopefieldNetwork(size)
-    net.trainOja(X)
+    net.trainOja(X, iter=100000)
     x = X[4]
     s = dataManager.resize(x)
     dataManager.show([s])

@@ -31,10 +31,11 @@ class HopefieldNetwork(object):
             for x in data:
                 Ys = np.dot(x, self.W)
                 t1 = np.outer(Ys,x)
-                t2 = np.square(Ys)*self.W.T
+                t2 = np.square(Ys)*self.W
                 self.W += u*(t1-t2).reshape(self.W.shape)
-            print(i, "\t", np.linalg.norm(Wprev - self.W))
-            if np.linalg.norm(Wprev - self.W) < 1e-6:
+
+            # print(i, "\t", np.linalg.norm(Wprev - self.W))
+            if np.linalg.norm(Wprev - self.W) < 1e-8:
                 break 
 
 
