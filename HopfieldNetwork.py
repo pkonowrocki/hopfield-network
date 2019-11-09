@@ -39,7 +39,7 @@ class HopefieldNetwork(object):
             self.show_weights(f'Iteration#{0}')
 
         for i in range(iter):
-            print(f'Iteration #{i+1}/{iter}')
+            
             Wprev = self.W.copy()
             for x in data:
                 Ys = np.dot(x, self.W)
@@ -49,7 +49,7 @@ class HopefieldNetwork(object):
 
             if(showWeights):
                 self.show_weights(f'Iteration#{i+1}')
-                print(i+1, "\t", np.linalg.norm(Wprev - self.W))
+                print(f'Iteration #{i+1}/{iter}', "\t", np.linalg.norm(Wprev - self.W))
 
             if np.linalg.norm(Wprev - self.W) < 1e-14:
                 break 

@@ -12,7 +12,7 @@ def test0():
     # net.trainHebb(X, showWeights=True)
     
 
-    #checkManuallyIfItWorks(net, X)
+    checkManuallyIfItWorks(net, X)
 
 def checkManuallyIfItWorks(net, X):
     corruptedFigures2p = dc.corruptAllFigures(X, percent = 2, resultSizePerFigure = 1)
@@ -65,5 +65,34 @@ def manuallyCheckForFigure(net, figure):
     s = dataManager.resize(s)
     dataManager.show([s])
 
+def testAccuracyOfTrainingMethods(hebb = None, oja = None, corruptBy = 5):
+    X, size = dataManager.importData('data/small-7x7.csv')
+
+    if oja == None:
+        oja = HopfieldNetwork.HopefieldNetwork(size)
+        oja.trainOja(X, u=0.001, iter=2000, showWeights=False)
+
+    if hebb == None:
+        hebb = HopfieldNetwork.HopefieldNetwork(size)
+        hebb.trainHebb(X, showWeights=False)
+
+    Xc = dc.corruptAllFigures(X, percent = corruptBy, resultSizePerFigure = 1)
+
+    correctOja = 0
+    correctHebb = 0
+    for i in range(len(Xc)):
+        resultOja = oja.forward(data=Xc[i][0], iter=20)
+        resultHebb = hebb.forward(data=Xc[i][0], iter=20)
+        print(f'sample: {i+1}\tHebb: {np.all(resultHebb==X[i][0])}\tOja: {np.all(resultOja==X[i][0])}')
+        if np.all(resultHebb==X[i][0]):
+            correctHebb += 1
+        
+        if np.all(resultOja==X[i][0]):
+            correctOja +=1
+
+        print(f'Oja learning rule got {correctOja}/{len(X)} right')
+        print(f'Hebb learning rule got {correctHebb}/{len(X)} right')
+
 if __name__ == "__main__":
-    test0()
+    # test0()
+    testAccuracyOfTrainingMethods()
