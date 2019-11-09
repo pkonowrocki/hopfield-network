@@ -5,11 +5,11 @@ import matplotlib.cm as cm
 class HopefieldNetwork(object):
     def __init__(self, size):
         self.num_neurons = size
-        self.W = np.zeros((self.num_neurons, self.num_neurons), dtype = float)
+        self.W = np.ones((self.num_neurons, self.num_neurons), dtype = float)
     
     def resetNetwork(self):
-        self.W = np.zeros(self.W.shape, dtype = float)
-
+        self.W = np.ones((self.num_neurons, self.num_neurons), dtype = float)
+    
     def trainHebb(self, data):
         self.initialize_for_showing_weights()
 
@@ -20,10 +20,24 @@ class HopefieldNetwork(object):
             self.W += np.outer(t, t)
             self.show_weights(f'Iteration#{i+1}')
         
-        self.W -= np.diag(self.W)
-        self.W /= len(data)
-        self.show_weights('Final', is_final = True)
-    
+        self.W -= np.diag(np.diag(self.W))
+        self.W = self.W/len(data)
+
+    def trainOja(self, data, u = 0.0001, iter = 1000):
+        self.W = np.random.normal(scale=0.25, size=self.W.shape)
+
+        for i in range(iter):
+            Wprev = self.W.copy()
+            for x in data:
+                Ys = np.dot(x, self.W)
+                t1 = np.outer(Ys,x)
+                t2 = np.square(Ys)*self.W.T
+                self.W += u*(t1-t2).reshape(self.W.shape)
+            print(i, "\t", np.linalg.norm(Wprev - self.W))
+            if np.linalg.norm(Wprev - self.W) < 1e-6:
+                break 
+
+
     def _async(self, x, W):
         idx = np.random.randint(0, self.num_neurons) 
         x[idx] = np.sign(np.matmul(W[idx].T, x))
