@@ -4,6 +4,7 @@ import random
 def corruptAllFigures(allFigures, percent, resultSizePerFigure):
     corruptedAllFigures = []
     for figure in allFigures:
+        figure = figure.copy()
         corruptedFigures = corruptFigure(figure, percent, resultSizePerFigure)
         corruptedAllFigures.append(corruptedFigures)
     return corruptedAllFigures
