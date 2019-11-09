@@ -83,11 +83,11 @@ def testAccuracyOfTrainingMethods(hebb = None, oja = None, corruptBy = 5):
     for i in range(len(Xc)):
         resultOja = oja.forward(data=Xc[i][0], iter=20)
         resultHebb = hebb.forward(data=Xc[i][0], iter=20)
-        print(f'sample: {i+1}\tHebb: {np.all(resultHebb==X[i][0])}\tOja: {np.all(resultOja==X[i][0])}')
-        if np.all(resultHebb==X[i][0]):
+        print(f'sample: {i+1}\tHebb: {np.all(resultHebb==X[i])}\tOja: {np.all(resultOja==X[i])}')
+        if np.all(resultHebb==X[i]):
             correctHebb += 1
         
-        if np.all(resultOja==X[i][0]):
+        if np.all(resultOja==X[i]):
             correctOja +=1
 
         print(f'Oja learning rule got {correctOja}/{len(X)} right')
