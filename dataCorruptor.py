@@ -10,7 +10,11 @@ def corruptAllFigures(allFigures, percent, resultSizePerFigure):
     return corruptedAllFigures
 
 def corruptFigure(figure, percent, resultSize):
-    figures = [figure] * resultSize
+    # duplicate the same figure resultSize times to modify each in a different way
+    figures = []
+    for i in range(resultSize):
+        figures.append(figure.copy())
+
     return _corruptData(figures, percent)
 
 def corruptData():
@@ -39,8 +43,9 @@ def _getPercent():
 
 def _corruptData(figures, percent):
     itemsToCorrupt = round(percent / 100 * len(figures[0]))
+    # print(f'itemsToCorrupt: {itemsToCorrupt}')
     for i, figure in enumerate(figures):
-        # print(f'Mutating figure#{i+1}')
+        # print(f'Modifying figure #{i+1}')
         alreadyMutated = []
         mutationIndex = None
         for j in range(itemsToCorrupt):
