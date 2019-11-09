@@ -76,22 +76,25 @@ def testAccuracyOfTrainingMethods(hebb = None, oja = None, corruptBy = 5):
         hebb = HopfieldNetwork.HopefieldNetwork(size)
         hebb.trainHebb(X, showWeights=False)
 
-    Xc = dc.corruptAllFigures(X, percent = corruptBy, resultSizePerFigure = 1)
+    Xc = dc.corruptAllFigures(X, percent = corruptBy, resultSizePerFigure = 5)
 
     correctOja = 0
     correctHebb = 0
+    tries = 0;
     for i in range(len(Xc)):
-        resultOja = oja.forward(data=Xc[i][0], iter=20)
-        resultHebb = hebb.forward(data=Xc[i][0], iter=20)
-        print(f'sample: {i+1}\tHebb: {np.all(resultHebb==X[i])}\tOja: {np.all(resultOja==X[i])}')
-        if np.all(resultHebb==X[i]):
-            correctHebb += 1
-        
-        if np.all(resultOja==X[i]):
-            correctOja +=1
+        for j in range(len(Xc[i])):
+            resultOja = oja.forward(data=Xc[i][j], iter=20)
+            resultHebb = hebb.forward(data=Xc[i][j], iter=20)
+            print(f'sample: {i+1}-{j+1}/{len(Xc)}-{len(Xc[i])} \tHebb: {np.all(resultHebb==X[i])}\tOja: {np.all(resultOja==X[i])}')
+            tries += 1
+            if np.all(resultHebb==X[i]):
+                correctHebb += 1
 
-        print(f'Oja learning rule got {correctOja}/{len(X)} right')
-        print(f'Hebb learning rule got {correctHebb}/{len(X)} right')
+            if np.all(resultOja==X[i]):
+                correctOja +=1
+
+            print(f'Oja learning rule got {correctOja}/{tries} right')
+            print(f'Hebb learning rule got {correctHebb}/{tries} right')
 
 if __name__ == "__main__":
     # test0()
