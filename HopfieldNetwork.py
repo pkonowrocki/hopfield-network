@@ -34,7 +34,7 @@ class HopefieldNetwork(object):
         self.W = np.random.normal(scale=0.25, size=self.W.shape)
         self.W = (self.W + self.W.T)/2
         self.W -= np.diag(np.diag(self.W))
-        
+
         if showWeights:
             self.initialize_for_showing_weights()
             self.show_weights(f'Iteration#{0}')
@@ -61,12 +61,18 @@ class HopefieldNetwork(object):
             self.save_weights()
 
     def _async(self, x, W):
-        idx = np.random.randint(0, self.num_neurons) 
-        x[idx] = np.sign(np.matmul(W[idx], x))
-        return x
+        xsync, _ = self._sync(x, W)
+        change = np.multiply(xsync, x)
+        changed = np.argwhere(change < 0)
+        if changed.size ==0:
+            return x, False
+        else:
+            toChange = np.random.choice(changed.reshape(-1))
+            x[toChange] = xsync[toChange]
+            return x, True 
 
     def _sync(self, x, W):
-        return np.sign(np.matmul(W, x))
+        return np.sign(np.matmul(W, x)), True
 
     def forward(self, data, iter = 20, asyn = False, print = None):
         s = data
@@ -75,24 +81,37 @@ class HopefieldNetwork(object):
         else:
             f = self._sync
         
-        e = self.energy(s)
+        e = []
+        e.append(0)
+        e.append(self.energy(s))
 
         for i in range(iter):
-            s = f(s, self.W)
-            eNew = self.energy(s)
+            s, cont = f(s, self.W)
+            e.append(self.energy(s))
 
             if print != None:
-                print(s, i+1)
+                print(s, f'{i+1}  E: {e[-1]}')
+                self.plotEnergy(e)
 
-            if f != self._async and e == eNew:
+            if not cont:
                 return s
-            
-            e = eNew
+
+            if f == self._sync and e[-1] == e[-2]:
+                return s
+            elif f == self._sync and np.abs(e[-1] - e[-3]) < 1e-4 and e[-1] > e[-2]:
+                return s
         
         return s
 
     def energy(self, s):
         return -0.5*np.matmul(np.matmul(s, self.W), s)
+
+    def plotEnergy(self, energy):
+        plt.figure(5000)
+        # print(energy[-3], energy[-2], energy[-1])
+        plt.ion()
+        plt.clf()
+        plt.plot(energy)
 
     def initialize_for_showing_weights(self):
         plt.ion()

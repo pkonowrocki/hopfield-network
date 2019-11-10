@@ -45,3 +45,5 @@ def _show_single(X, title = ''):
 def stopAnimation():
     print('Click Enter')
     input()
+    plt.figure(1000)
+    plt.clf()

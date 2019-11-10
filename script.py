@@ -65,8 +65,8 @@ def manuallyCheckForFigure(net, figure):
     s = dataManager.resize(s)
     dataManager.show([s])
 
-def testAccuracyOfTrainingMethods(hebb = None, oja = None, corruptBy = 2, showImages = True):
-    X, size = dataManager.importData('data/large-25x25.csv')
+def testAccuracyOfTrainingMethods(hebb = None, oja = None, corruptBy = 2, showImages = False):
+    X, size = dataManager.importData('data/small-7x7.csv')
 
     if oja == None:
         oja = HopfieldNetwork.HopefieldNetwork(size)
@@ -89,7 +89,7 @@ def testAccuracyOfTrainingMethods(hebb = None, oja = None, corruptBy = 2, showIm
             resultHebb = hebb.forward(
                 data=Xc[i][0], 
                 iter=20000, 
-                asyn=False, 
+                asyn=True, 
                 print=lambda c, t: dataManager.show([dataManager.resize(c)], f'Hebb iteration {t}'))
 
             dataManager.stopAnimation()
@@ -97,18 +97,27 @@ def testAccuracyOfTrainingMethods(hebb = None, oja = None, corruptBy = 2, showIm
             resultOja = oja.forward(
                 data=Xc[i][0], 
                 iter=20000, 
-                asyn=False, 
+                asyn=True, 
                 print=lambda c, t: dataManager.show([dataManager.resize(c)], f'Oja iteration {t}'))
+
+            dataManager.stopAnimation()
         else:
+            dataManager.show([dataManager.resize(Xc[i][0])], f'Orginal')
+            dataManager.stopAnimation()
+
             resultOja = oja.forward(
                 data=Xc[i][0], 
-                iter=2000, 
+                iter=20000, 
                 asyn=True)
+            dataManager.show([dataManager.resize(resultOja)], f'Oja final')
+            dataManager.stopAnimation()
 
             resultHebb = hebb.forward(
                 data=Xc[i][0], 
-                iter=2000, 
+                iter=20000, 
                 asyn=True)
+            dataManager.show([dataManager.resize(resultOja)], f'Hebb final')
+            dataManager.stopAnimation()
 
         print(f'sample: {i+1}\tHebb: {np.all(resultHebb==X[i])}\tOja: {np.all(resultOja==X[i])}')
         if np.all(resultHebb==X[i]):
