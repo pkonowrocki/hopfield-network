@@ -41,3 +41,7 @@ def _show_single(X, title = ''):
     plt.imshow(X)
     plt.show()
     plt.pause(0.001)
+
+def stopAnimation():
+    print('Click Enter')
+    input()

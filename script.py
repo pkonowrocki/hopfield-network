@@ -65,7 +65,7 @@ def manuallyCheckForFigure(net, figure):
     s = dataManager.resize(s)
     dataManager.show([s])
 
-def testAccuracyOfTrainingMethods(hebb = None, oja = None, corruptBy = 2, showImages = False):
+def testAccuracyOfTrainingMethods(hebb = None, oja = None, corruptBy = 2, showImages = True):
     X, size = dataManager.importData('data/large-25x25.csv')
 
     if oja == None:
@@ -83,18 +83,22 @@ def testAccuracyOfTrainingMethods(hebb = None, oja = None, corruptBy = 2, showIm
     for i in range(len(X)):
         if showImages:
             dataManager.show([dataManager.resize(Xc[i][0])], f'orginal')
-
-            resultOja = oja.forward(
-                data=Xc[i][0], 
-                iter=20000, 
-                asyn=False, 
-                print=lambda c, t: dataManager.show([dataManager.resize(c)], f'Oja iteration {t}'))
+            
+            dataManager.stopAnimation()
 
             resultHebb = hebb.forward(
                 data=Xc[i][0], 
                 iter=20000, 
                 asyn=False, 
                 print=lambda c, t: dataManager.show([dataManager.resize(c)], f'Hebb iteration {t}'))
+
+            dataManager.stopAnimation()
+
+            resultOja = oja.forward(
+                data=Xc[i][0], 
+                iter=20000, 
+                asyn=False, 
+                print=lambda c, t: dataManager.show([dataManager.resize(c)], f'Oja iteration {t}'))
         else:
             resultOja = oja.forward(
                 data=Xc[i][0], 
