@@ -65,8 +65,8 @@ def manuallyCheckForFigure(net, figure):
     s = dataManager.resize(s)
     dataManager.show([s])
 
-def testAccuracyOfTrainingMethods(hebb = None, oja = None, corruptBy = 5):
-    X, size = dataManager.importData('data/small-7x7.csv')
+def testAccuracyOfTrainingMethods(hebb = None, oja = None, corruptBy = 2, showImages = False):
+    X, size = dataManager.importData('data/large-25x25.csv')
 
     if oja == None:
         oja = HopfieldNetwork.HopefieldNetwork(size)
@@ -80,9 +80,32 @@ def testAccuracyOfTrainingMethods(hebb = None, oja = None, corruptBy = 5):
 
     correctOja = 0
     correctHebb = 0
-    for i in range(len(Xc)):
-        resultOja = oja.forward(data=Xc[i][0], iter=20)
-        resultHebb = hebb.forward(data=Xc[i][0], iter=20)
+    for i in range(len(X)):
+        if showImages:
+            dataManager.show([dataManager.resize(Xc[i][0])], f'orginal')
+
+            resultOja = oja.forward(
+                data=Xc[i][0], 
+                iter=20000, 
+                asyn=False, 
+                print=lambda c, t: dataManager.show([dataManager.resize(c)], f'Oja iteration {t}'))
+
+            resultHebb = hebb.forward(
+                data=Xc[i][0], 
+                iter=20000, 
+                asyn=False, 
+                print=lambda c, t: dataManager.show([dataManager.resize(c)], f'Hebb iteration {t}'))
+        else:
+            resultOja = oja.forward(
+                data=Xc[i][0], 
+                iter=2000, 
+                asyn=True)
+
+            resultHebb = hebb.forward(
+                data=Xc[i][0], 
+                iter=2000, 
+                asyn=True)
+
         print(f'sample: {i+1}\tHebb: {np.all(resultHebb==X[i])}\tOja: {np.all(resultOja==X[i])}')
         if np.all(resultHebb==X[i]):
             correctHebb += 1
@@ -90,8 +113,8 @@ def testAccuracyOfTrainingMethods(hebb = None, oja = None, corruptBy = 5):
         if np.all(resultOja==X[i]):
             correctOja +=1
 
-        print(f'Oja learning rule got {correctOja}/{len(X)} right')
-        print(f'Hebb learning rule got {correctHebb}/{len(X)} right')
+    print(f'Oja learning rule got {correctOja}/{len(X)} right')
+    print(f'Hebb learning rule got {correctHebb}/{len(X)} right')
 
 if __name__ == "__main__":
     # test0()

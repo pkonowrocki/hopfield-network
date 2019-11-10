@@ -28,12 +28,13 @@ class HopefieldNetwork(object):
 
         if showWeights:
             self.show_weights(f'Final', block=True)
-        self.save_weights()
+            self.save_weights()
 
     def trainOja(self, data, u = 0.0001, iter = 1000, showWeights = False):
         self.W = np.random.normal(scale=0.25, size=self.W.shape)
         self.W = (self.W + self.W.T)/2
-
+        self.W -= np.diag(np.diag(self.W))
+        
         if showWeights:
             self.initialize_for_showing_weights()
             self.show_weights(f'Iteration#{0}')
@@ -57,17 +58,17 @@ class HopefieldNetwork(object):
         self.W -= np.diag(np.diag(self.W))
         if showWeights:
             self.show_weights(f'Final', block=True)
-        self.save_weights()
+            self.save_weights()
 
     def _async(self, x, W):
         idx = np.random.randint(0, self.num_neurons) 
-        x[idx] = np.sign(np.matmul(W[idx].T, x))
+        x[idx] = np.sign(np.matmul(W[idx], x))
         return x
 
     def _sync(self, x, W):
         return np.sign(np.matmul(W, x))
 
-    def forward(self, data, iter = 20, asyn = False):
+    def forward(self, data, iter = 20, asyn = False, print = None):
         s = data
         if asyn:
             f = self._async
@@ -80,7 +81,10 @@ class HopefieldNetwork(object):
             s = f(s, self.W)
             eNew = self.energy(s)
 
-            if e == eNew:
+            if print != None:
+                print(s, i+1)
+
+            if f != self._async and e == eNew:
                 return s
             
             e = eNew

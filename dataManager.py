@@ -26,15 +26,18 @@ def _resize_single(X, size = None):
 def _calculate_size(shape):
     return (int(np.sqrt(shape)), int(np.sqrt(shape)))
 
-def show(X):
-    if type(X) is list:
-        for x in X:
-            _show_single(x)
-    else:
-        _show_single(X)
-
-def _show_single(X):
+def show(X, title = ''):
     plt.figure(1000)
+    plt.ion()
+    if type(X) is list:
+        for i in range(len(X)):
+            _show_single(X[i], f'{title} #{i+1}')
+    else:
+        _show_single(X, title)
+
+def _show_single(X, title = ''):
+    plt.figure(1000)
+    plt.title(title)
     plt.imshow(X)
     plt.show()
-    plt.pause(0.1)
+    plt.pause(0.001)
