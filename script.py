@@ -65,8 +65,8 @@ def manuallyCheckForFigure(net, figure):
     s = dataManager.resize(s)
     dataManager.show([s])
 
-def testAccuracyOfTrainingMethods(hebb = None, oja = None, corruptBy = 2, showImages = False):
-    X, size = dataManager.importData('data/small-7x7.csv')
+def testAccuracyOfTrainingMethods(hebb = None, oja = None, corruptBy = 0, showImages = True):
+    X, size = dataManager.importData('data/mini.csv')
 
     if oja == None:
         oja = HopfieldNetwork.HopefieldNetwork(size)
@@ -89,7 +89,7 @@ def testAccuracyOfTrainingMethods(hebb = None, oja = None, corruptBy = 2, showIm
             resultHebb = hebb.forward(
                 data=Xc[i][0], 
                 iter=20000, 
-                asyn=True, 
+                asyn=False, 
                 print=lambda c, t: dataManager.show([dataManager.resize(c)], f'Hebb iteration {t}'))
 
             dataManager.stopAnimation()
@@ -97,7 +97,7 @@ def testAccuracyOfTrainingMethods(hebb = None, oja = None, corruptBy = 2, showIm
             resultOja = oja.forward(
                 data=Xc[i][0], 
                 iter=20000, 
-                asyn=True, 
+                asyn=False, 
                 print=lambda c, t: dataManager.show([dataManager.resize(c)], f'Oja iteration {t}'))
 
             dataManager.stopAnimation()

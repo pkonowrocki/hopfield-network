@@ -14,17 +14,8 @@ class HopefieldNetwork(object):
         if showWeights:
             self.initialize_for_showing_weights()
 
-        rho = np.sum([np.sum(t) for t in data]) / (len(data) * self.num_neurons)
-
-        for i, ex in enumerate(data):
-            t = ex - rho
-            self.W += np.outer(t, t)
-
-            if(showWeights):
-                self.show_weights(f'Iteration#{i+1}')
-        
-        self.W -= np.diag(np.diag(self.W))
-        self.W = self.W/len(data)
+        X = np.array(data).T
+        self.W = (np.matmul(X,X.T) - len(data)*np.eye(self.num_neurons))/self.num_neurons
 
         if showWeights:
             self.show_weights(f'Final', block=True)
@@ -34,19 +25,25 @@ class HopefieldNetwork(object):
         self.W = np.random.normal(scale=0.25, size=self.W.shape)
         self.W = (self.W + self.W.T)/2
         self.W -= np.diag(np.diag(self.W))
-
+        print(self.W)
         if showWeights:
             self.initialize_for_showing_weights()
             self.show_weights(f'Iteration#{0}')
+        
+        X = np.array(data).T #n x m
 
         for i in range(iter):
-            
             Wprev = self.W.copy()
+            # Ys = np.matmul(self.W, X) # n x m 
+            # t1 = np.matmul(Ys,X.T) # n x n
+            # Ysquare = np.matmul(Ys, Ys.T) # n x n
+            # t2 = np.matmul(Ysquare, self.W)  # n x n
+            # self.W += u*(t1 - t2)
+
+            y = np.zeros(data[0].shape)
             for x in data:
-                Ys = np.dot(x, self.W)
-                t1 = np.outer(Ys,x)
-                t2 = np.square(Ys)*self.W
-                self.W += u*(t1-t2).reshape(self.W.shape)
+                y = np.matmul(x, self.W)
+                
 
             if(showWeights):
                 self.show_weights(f'Iteration#{i+1}')
@@ -56,6 +53,7 @@ class HopefieldNetwork(object):
                 break 
         
         self.W -= np.diag(np.diag(self.W))
+        print(self.W)
         if showWeights:
             self.show_weights(f'Final', block=True)
             self.save_weights()
