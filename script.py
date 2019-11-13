@@ -66,7 +66,7 @@ def manuallyCheckForFigure(net, figure):
     dataManager.show([s])
 
 def testAccuracyOfTrainingMethods(hebb = None, oja = None, corruptBy = 0, showImages = True):
-    X, size = dataManager.importData('data/mini.csv')
+    X, size = dataManager.importData('data/small-7x7.csv')
 
     if oja == None:
         oja = HopfieldNetwork.HopefieldNetwork(size)

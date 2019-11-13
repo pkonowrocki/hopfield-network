@@ -40,7 +40,7 @@ def _show_single(X, title = ''):
     plt.title(title)
     plt.imshow(X)
     plt.show()
-    plt.pause(0.001)
+    plt.pause(0.01)
 
 def stopAnimation():
     print('Click Enter')

@@ -22,38 +22,28 @@ class HopefieldNetwork(object):
             self.save_weights()
 
     def trainOja(self, data, u = 0.0001, iter = 1000, showWeights = False):
-        self.W = np.random.normal(scale=0.25, size=self.W.shape)
-        self.W = (self.W + self.W.T)/2
-        self.W -= np.diag(np.diag(self.W))
-        print(self.W)
+        self.trainHebb(data)
+
         if showWeights:
             self.initialize_for_showing_weights()
             self.show_weights(f'Iteration#{0}')
-        
-        X = np.array(data).T #n x m
 
-        for i in range(iter):
+        for it in range(iter):
             Wprev = self.W.copy()
-            # Ys = np.matmul(self.W, X) # n x m 
-            # t1 = np.matmul(Ys,X.T) # n x n
-            # Ysquare = np.matmul(Ys, Ys.T) # n x n
-            # t2 = np.matmul(Ysquare, self.W)  # n x n
-            # self.W += u*(t1 - t2)
-
-            y = np.zeros(data[0].shape)
             for x in data:
                 y = np.matmul(x, self.W)
-                
+                for i in range(self.num_neurons):
+                    for j in range(self.num_neurons):
+                        self.W[i,j] += u*(y[i]*x[j] - self.W[i,j]*(y[i]**2))
 
             if(showWeights):
-                self.show_weights(f'Iteration#{i+1}')
-                print(f'Iteration #{i+1}/{iter}', "\t", np.linalg.norm(Wprev - self.W))
+                self.show_weights(f'Iteration#{it+1}')
+                print(f'Iteration #{it+1}/{iter}', "\t", np.linalg.norm(Wprev - self.W))
 
             if np.linalg.norm(Wprev - self.W) < 1e-14:
                 break 
         
         self.W -= np.diag(np.diag(self.W))
-        print(self.W)
         if showWeights:
             self.show_weights(f'Final', block=True)
             self.save_weights()
@@ -109,6 +99,9 @@ class HopefieldNetwork(object):
         # print(energy[-3], energy[-2], energy[-1])
         plt.ion()
         plt.clf()
+        plt.title('Energy value')
+        plt.ylabel('Energy')
+        plt.xlabel('Iteration')
         plt.plot(energy)
 
     def initialize_for_showing_weights(self):
