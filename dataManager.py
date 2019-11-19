@@ -1,6 +1,7 @@
 import csv
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
 
 def importData(path):
     with open(path) as csv_file:
@@ -8,7 +9,7 @@ def importData(path):
         X = []
         for row in csv_reader:
             X.append(np.array(row, dtype=float))    
-    return X, np.max(X[1].shape)
+    return X, np.max(X[0].shape)
 
 def resize(X, size = None):
     if type(X) is list:
@@ -47,3 +48,18 @@ def stopAnimation():
     input()
     plt.figure(1000)
     plt.clf()
+
+def rgb2gray(rgb):
+    return np.dot(rgb[...,:3], [0.2989, 0.5870, 0.1140])
+
+def _readImage(path):
+    X = mpimg.imread(path)    
+    X = np.sign(rgb2gray(X) - 127).flatten()
+    return X, np.max(X.shape)
+
+def importImages(paths):
+    X = []
+    for path in paths:
+        x, size = _readImage(path)
+        X.append(x)
+    return X, size

@@ -66,7 +66,7 @@ def manuallyCheckForFigure(net, figure):
     dataManager.show([s])
 
 def testAccuracyOfTrainingMethods(hebb = None, oja = None, corruptBy = 0, showImages = True):
-    X, size = dataManager.importData('data/small-7x7.csv')
+    X, size = dataManager.importData('data/large-25xplus.csv')
 
     if oja == None:
         oja = HopfieldNetwork.HopefieldNetwork(size)
@@ -129,6 +129,83 @@ def testAccuracyOfTrainingMethods(hebb = None, oja = None, corruptBy = 0, showIm
     print(f'Oja learning rule got {correctOja}/{len(X)} right')
     print(f'Hebb learning rule got {correctHebb}/{len(X)} right')
 
+def test5x5():
+    X, size = dataManager.importData('data/5.csv')
+    hebb = HopfieldNetwork.HopefieldNetwork(size)
+    hebb.trainHebb(X, showWeights=False)
+
+    Xc = dc.corruptAllFigures(X, percent = 5, resultSizePerFigure = 1)
+    for i in range(len(X)):
+        dataManager.show([dataManager.resize(Xc[i][0])], f'orginal')
+        dataManager.stopAnimation()
+        resultHebb = hebb.forward(
+                data=Xc[i][0], 
+                iter=20, 
+                asyn=False, 
+                print=lambda c, t: dataManager.show([dataManager.resize(c)], f'Hebb iteration {t}'))
+        dataManager.stopAnimation()
+
+def testOsc():
+    X, size = dataManager.importData('data/mini.csv')
+    hebb = HopfieldNetwork.HopefieldNetwork(size)
+    hebb.trainHebb(X, showWeights=False)
+
+    for i in range(len(X)):
+        dataManager.show([dataManager.resize(X[i])], f'orginal')
+        dataManager.stopAnimation()
+        resultHebb = hebb.forward(
+                data=[-1, 1, -1, 1],
+                iter=20, 
+                asyn=False, 
+                print=lambda c, t: dataManager.show([dataManager.resize(c)], f'Hebb iteration {t}'))
+        dataManager.stopAnimation()
+
+def testImages():
+    X, size = dataManager.importImages([f'data/img/{i}.jpg' for i in range(1,10)])
+    hebb = HopfieldNetwork.HopefieldNetwork(size)
+    hebb.trainHebb(X, showWeights=False)
+
+    Xc = dc.corruptAllFigures(X, percent = 5, resultSizePerFigure = 1)
+    for i in range(len(X)):
+        dataManager.show([dataManager.resize(Xc[i][0])], f'orginal')
+        dataManager.stopAnimation()
+        resultHebb = hebb.forward(
+                data=Xc[i][0], 
+                iter=200, 
+                asyn=False, 
+                print=lambda c, t: dataManager.show([dataManager.resize(c)], f'Hebb iteration {t}'))
+        dataManager.stopAnimation()
+
+def showImages():
+    X, _ = dataManager.importImages([f'data/img/{i}.jpg' for i in range(1,10)])
+    fig = plt.figure(figsize=(9, 9))  # width, height in inches
+
+    for i in range(9):
+        sub = fig.add_subplot(3,3, i+1)
+        sub.imshow(dataManager.resize(X[i]), interpolation='nearest')
+        sub.axis('off')
+    plt.show()
+
+def testOscAsync():
+    X, size = dataManager.importData('data/mini.csv')
+    hebb = HopfieldNetwork.HopefieldNetwork(size)
+    hebb.trainHebb(X, showWeights=False)
+
+    for i in range(len(X)):
+        dataManager.show([dataManager.resize(X[i])], f'orginal')
+        dataManager.stopAnimation()
+        resultHebb = hebb.forward(
+                data=[-1, 1, -1, 1],
+                iter=20, 
+                asyn=True, 
+                print=lambda c, t: dataManager.show([dataManager.resize(c)], f'Hebb iteration {t}'))
+        dataManager.stopAnimation()
+
 if __name__ == "__main__":
     # test0()
     testAccuracyOfTrainingMethods()
+    # test5x5()
+    # testOsc()
+    # testImages()
+    # showImages()
+    # testOscAsync()

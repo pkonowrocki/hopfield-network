@@ -5,23 +5,27 @@ import matplotlib.cm as cm
 class HopefieldNetwork(object):
     def __init__(self, size):
         self.num_neurons = size
-        self.W = np.ones((self.num_neurons, self.num_neurons), dtype = float)
+        self.W = np.ones((self.num_neurons, self.num_neurons), dtype = 'float16')
     
     def resetNetwork(self):
-        self.W = np.ones((self.num_neurons, self.num_neurons), dtype = float)
+        self.W = np.ones((self.num_neurons, self.num_neurons), dtype = 'float16')
     
     def trainHebb(self, data, showWeights = False):
+        self.type = self.trainHebb
+
         if showWeights:
             self.initialize_for_showing_weights()
 
         X = np.array(data).T
-        self.W = (np.matmul(X,X.T) - len(data)*np.eye(self.num_neurons))/self.num_neurons
+        self.W = (np.matmul(X,X.T) - len(data)*np.eye(self.num_neurons, dtype='float16'))/self.num_neurons
 
         if showWeights:
             self.show_weights(f'Final', block=True)
             self.save_weights()
 
     def trainOja(self, data, u = 0.0001, iter = 1000, showWeights = False):
+        self.type = self.trainOja
+
         self.trainHebb(data)
 
         if showWeights:
@@ -31,6 +35,7 @@ class HopefieldNetwork(object):
         for it in range(iter):
             Wprev = self.W.copy()
             for x in data:
+                x = (x+1)/2
                 y = np.matmul(x, self.W)
                 for i in range(self.num_neurons):
                     for j in range(self.num_neurons):
@@ -53,11 +58,11 @@ class HopefieldNetwork(object):
         change = np.multiply(xsync, x)
         changed = np.argwhere(change < 0)
         if changed.size ==0:
-            return x, False
+            return np.array(x), False
         else:
             toChange = np.random.choice(changed.reshape(-1))
             x[toChange] = xsync[toChange]
-            return x, True 
+            return np.array(x), True 
 
     def _sync(self, x, W):
         return np.sign(np.matmul(W, x)), True
@@ -74,20 +79,21 @@ class HopefieldNetwork(object):
         e.append(self.energy(s))
 
         for i in range(iter):
+            if self.type == self.trainOja:
+                s = (s+1)/2
             s, cont = f(s, self.W)
             e.append(self.energy(s))
 
             if print != None:
+                # print(s, f'{i+1}')
                 print(s, f'{i+1}  E: {e[-1]}')
                 self.plotEnergy(e)
 
-            if not cont:
-                return s
+            # if not cont:
+            #     return s
 
-            if f == self._sync and e[-1] == e[-2]:
-                return s
-            elif f == self._sync and np.abs(e[-1] - e[-3]) < 1e-4 and e[-1] > e[-2]:
-                return s
+            # if f == self._sync and e[-1] == e[-2]:
+            #     return s
         
         return s
 
